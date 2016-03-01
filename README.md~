@@ -1,3 +1,7 @@
+<<<<<<< b4128a2ffdde924e11c1a7a7de919920ef3839c9
+# aeropuerto
+Reserva de billetes de aeropuerto como prueba antes del examen de Codeigniter
+=======
 # CodeIgniter Composer Installer
 
 [![Latest Stable Version](https://poser.pugx.org/kenjis/codeigniter-composer-installer/v/stable)](https://packagist.org/packages/kenjis/codeigniter-composer-installer) [![Total Downloads](https://poser.pugx.org/kenjis/codeigniter-composer-installer/downloads)](https://packagist.org/packages/kenjis/codeigniter-composer-installer) [![Latest Unstable Version](https://poser.pugx.org/kenjis/codeigniter-composer-installer/v/unstable)](https://packagist.org/packages/kenjis/codeigniter-composer-installer) [![License](https://poser.pugx.org/kenjis/codeigniter-composer-installer/license)](https://packagist.org/packages/kenjis/codeigniter-composer-installer)
@@ -128,3 +132,4 @@ You must update files manually if files in `application` folder or `index.php` c
 * [CodeIgniter Doctrine](https://github.com/kenjis/codeigniter-doctrine)
 * [CodeIgniter Deployer](https://github.com/kenjis/codeigniter-deployer)
 * [CodeIgniter3 Filename Checker](https://github.com/kenjis/codeigniter3-filename-checker)
+>>>>>>> Mitad completada
