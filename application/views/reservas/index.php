@@ -42,7 +42,7 @@
                 <div class="form-group">
                         <?php foreach($reservas as $reserva): ?>
                             <?= form_open('reservas/anula') ?>
-                                <?= form_hidden('id_reserva', $reserva['id']) ?>
+                                <?= form_hidden('id_reserva', $reserva['id_reserva']) ?>
                                 <?= form_label($reserva['companyia']." ".$reserva['vuelo'].": ".$reserva['origen'].
                                                 "-".$reserva['destino']." -> ".$reserva['salida'].
                                                 " [Asiento: ".$reserva['asiento']."]") ?>
