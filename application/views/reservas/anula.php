@@ -10,10 +10,11 @@
         <div class="panel-body">
             <div class="form-group">
                 <?= form_open('reservas/anula') ?>
-                    <?= form_hidden('id_vuelo', $vuelo['id']) ?>
+                    <?= form_hidden('id_reserva', $vuelo['id_reserva']) ?>
                     <h3>¿Está seguro de anular el siguiente vuelo?</h3>
                     <?= form_label($vuelo['companyia']." ".$vuelo['vuelo'].": ".$vuelo['origen'].
-                                    "-".$vuelo['destino']." -> ".$vuelo['salida']) ?>
+                                    "-".$vuelo['destino']." -> ".$vuelo['salida'].
+                                    " [Asiento: ".$vuelo['asiento']."]") ?>
                     <br />
                     <?= form_submit('confirmar', 'Confirmar', 'class="btn btn-success"') ?>
                 <?= form_close() ?>

@@ -8,17 +8,22 @@
           <h3 class="panel-title">Confirma reserva</h3>
         </div>
         <div class="panel-body">
-            <div class="form-group">
+
                 <?= form_open('reservas/reserva') ?>
                     <?= form_hidden('id_vuelo', $vuelo['id']) ?>
-                    <h3>¿Está seguro de reservar el siguiente vuelo?</h3>
+                    <h3>Elija asiento y confirme la reserva</h3>
+                    <div class="form-group">
                     <?= form_label($vuelo['companyia']." ".$vuelo['vuelo'].": ".$vuelo['origen'].
                                     "-".$vuelo['destino']." -> ".$vuelo['salida'].
                                     " [Plazas disponibles:".$vuelo['plazas']."]") ?>
-                    <br />
+                    </div>
+                    <div class="form-group">
+                        <?= form_label('Asiento') ?>
+                        <?= form_dropdown('asiento', $asientos) ?>
+                    </div>
                     <?= form_submit('confirmar', 'Confirmar', 'class="btn btn-success"') ?>
                 <?= form_close() ?>
-                </div>
+            </div>
         </div>
       </div>
     </div>

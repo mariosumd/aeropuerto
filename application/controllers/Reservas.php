@@ -24,14 +24,15 @@ class Reservas extends CI_Controller{
   {
       if ($this->input->post('anular') !== NULL)
       {
-          $id_vuelo = $this->input->post('id_vuelo');
-          $data['vuelo'] = $this->Aeropuerto->por_id($id_vuelo);
+          $id_reserva = $this->input->post('id_reserva');
+          $usuario    = $this->session->userdata('usuario');
+          $data['vuelo'] = $this->Reserva->por_reserva($id_reserva);
           $this->template->load('reservas/anula', $data);
       }
       elseif ($this->input->post('confirmar') !== NULL)
       {
-          $id_vuelo = $this->input->post('id_vuelo');
-          $this->Reserva->anular($id_vuelo);
+          $id_reserva = $this->input->post('id_reserva');
+          $this->Reserva->anular($id_reserva);
           redirect('reservas/index');
       }
       else
@@ -46,12 +47,15 @@ class Reservas extends CI_Controller{
         {
             $id = $this->input->post('vuelo');
             $data['vuelo'] = $this->Aeropuerto->vuelo_por_id($id);
+            $data['asientos'] = $this->Aeropuerto->asientos($id);
+            if ($data['asientos'] === FALSE) redirect('reservas/index');
             $this->template->load("reservas/reserva", $data);
         }
         elseif ($this->input->post('confirmar') !== NULL)
         {
             $id_vuelo = $this->input->post('id_vuelo');
-            $this->Reserva->reservar($id_vuelo);
+            $asiento  = $this->input->post('asiento');
+            $this->Reserva->reservar($id_vuelo, $asiento);
             redirect('reservas/index');
         }
         else

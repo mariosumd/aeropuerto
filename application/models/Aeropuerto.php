@@ -24,4 +24,19 @@ class Aeropuerto extends CI_Model{
                                     array($id));
         return $res->num_rows() > 0 ? $res->row_array() : FALSE;
     }
+
+    public function asientos($id_vuelo) {
+        $asientos = $this->db->query('select plazas from vuelos where id = ?',
+                                        array($id_vuelo))->row_array()['plazas'];
+
+        $libres = array();
+
+        for ($i = 1; $i <= $asientos; $i++) {
+            if ( ! $this->Reserva->asiento_ocupado($id_vuelo, $i))
+            {
+                $libres[$i] = $i;
+            }
+        }
+        return $libres !== array() ? $libres : FALSE;
+    }
 }

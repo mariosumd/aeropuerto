@@ -38,9 +38,10 @@ create table vuelos(
 drop table if exists reservas cascade;
 
 create table reservas(
-    id          bigserial constraint pk_reservas primary key,
-    id_vuelo    bigint    constraint fk_reservas_vuelos   references vuelos(id) on delete cascade on update cascade,
-    id_usuario  bigint    constraint fk_reservas_usuarios references usuarios(id) on delete cascade on update cascade
+    id          bigserial  constraint pk_reservas primary key,
+    id_vuelo    bigint     constraint fk_reservas_vuelos   references vuelos(id) on delete cascade on update cascade,
+    id_usuario  bigint     constraint fk_reservas_usuarios references usuarios(id) on delete cascade on update cascade,
+    asiento     numeric(3) not null
 );
 
 drop table if exists ci_sessions cascade;
@@ -93,5 +94,5 @@ insert into vuelos (nombre, id_origen, id_destino, id_companyia, plazas, salida)
            ('CZ7894', 1, 3, 2, 2, '2016-03-02 09:00'::timestamp),
            ('QW9631', 2, 3, 3, 1, '2016-03-02 09:00'::timestamp);
 
-insert into reservas (id_vuelo, id_usuario)
-    values (1, 1);
+insert into reservas (id_vuelo, id_usuario, asiento)
+    values (1, 1, 1);
