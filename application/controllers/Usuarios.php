@@ -27,7 +27,7 @@ class Usuarios extends CI_Controller {
                 array(
                     'field' => 'password',
                     'label' => 'Contraseña',
-                    'rules' => "trim|required|callback__password_valido[$nombre]",
+                    'rules' => "trim|md5|required|callback__password_valido[$nombre]",
                     'errors' => array(
                         'required' => 'Nombre o contraseña no válidos.'
                     )
@@ -70,7 +70,7 @@ class Usuarios extends CI_Controller {
         $usuario = $this->Usuario->por_nombre($nombre);
 
         if ($usuario !== FALSE &&
-            md5($password) === $usuario['password'])
+            $password === $usuario['password'])
         {
             return TRUE;
         }
