@@ -33,6 +33,7 @@ class Reservas extends CI_Controller{
       {
           $id_reserva = $this->input->post('id_reserva');
           $this->Reserva->anular($id_reserva);
+          $this->mensajes->push_info('Ha anulado el vuelo satisfactoriamente.');
           redirect('reservas/index');
       }
       else
@@ -56,6 +57,7 @@ class Reservas extends CI_Controller{
             $id_vuelo = $this->input->post('id_vuelo');
             $asiento  = $this->input->post('asiento');
             $this->Reserva->reservar($id_vuelo, $asiento);
+            $this->mensajes->push_info('Ha reservado el vuelo satisfactoriamente.');
             redirect('reservas/index');
         }
         else
