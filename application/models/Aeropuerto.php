@@ -9,7 +9,7 @@ class Aeropuerto extends CI_Model{
     }
 
     public function por_id($id) {
-        $res = $this->db->query('select * from v_vuelos where id = ?',
+        $res = $this->db->query('select * from v_vuelos where vuelo = ?',
                                     array($id));
         return $res->num_rows() > 0 ? $res->row_array() : FALSE;
     }
@@ -20,13 +20,13 @@ class Aeropuerto extends CI_Model{
     }
 
     public function vuelo_por_id($id) {
-        $res = $this->db->query('select * from v_vuelos_disponibles where id = ?',
+        $res = $this->db->query('select * from v_vuelos_disponibles where vuelo = ?',
                                     array($id));
         return $res->num_rows() > 0 ? $res->row_array() : FALSE;
     }
 
     public function asientos($id_vuelo) {
-        $asientos = $this->db->query('select plazas from vuelos where id = ?',
+        $asientos = $this->db->query('select plazas from vuelos where id_vuelo = ?',
                                         array($id_vuelo))->row_array()['plazas'];
 
         $libres = array();

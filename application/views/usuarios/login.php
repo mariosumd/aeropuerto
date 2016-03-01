@@ -15,9 +15,9 @@
           <?php endif ?>
           <?= form_open('usuarios/login') ?>
             <div class="form-group">
-              <?= form_label('Email:', 'email') ?>
-              <?= form_input('email', set_value('email', '', FALSE),
-                             'id="email" class="form-control"') ?>
+              <?= form_label('Nombre:', 'nombre') ?>
+              <?= form_input('nombre', set_value('nombre', '', FALSE),
+                             'id="nombre" class="form-control"') ?>
             </div>
             <div class="form-group">
               <?= form_label('Contraseña:', 'password') ?>

@@ -8,14 +8,10 @@ class Usuario extends CI_Model{
         return $this->session->has_userdata('usuario');
     }
 
-    public function por_email($email)
+    public function por_nombre($nombre)
     {
-        $res = $this->db->get_where('usuarios', array('email' => $email));
+        $res = $this->db->query('select * from usuarios where nombre = ?',
+                                    array($nombre));
         return $res->num_rows() > 0 ? $res->row_array() : FALSE;
-    }
-
-    public function existe_email($email)
-    {
-        return $this->por_email($email) !== FALSE;
     }
 }

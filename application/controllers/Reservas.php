@@ -3,14 +3,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Reservas extends CI_Controller{
 
-  public function __construct()
-  {
-    parent::__construct();
-    if ( ! $this->Usuario->logueado())
+    public function __construct()
     {
-        redirect('usuarios/login');
+      parent::__construct();
+      if ( ! $this->Usuario->logueado())
+      {
+          redirect('usuarios/login');
+      }
     }
-  }
 
   public function index()
   {

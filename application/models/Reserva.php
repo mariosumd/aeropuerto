@@ -7,14 +7,14 @@ class Reserva extends CI_Model{
   {
       $usuario = $this->session->userdata('usuario');
 
-      $this->db->query('insert into reservas (id_usuario, id_vuelo, asiento)
-                        values (?, ?, ?)',
+      $this->db->query('insert into reservas (id_usuario, id_vuelo, asiento, fecha_hora)
+                        values (?, ?, ?, current_timestamp)',
                             array($usuario['id'], $id_vuelo, $asiento));
   }
 
   public function anular($id_reserva)
   {
-      $this->db->query('delete from reservas where id = ?',
+      $this->db->query('delete from reservas where id_reserva = ?',
                             array($id_reserva));
   }
 
@@ -28,7 +28,10 @@ class Reserva extends CI_Model{
 
   public function por_id($id)
   {
-      $res = $this->db->query("select id, id_vuelo, asiento from reservas where id_usuario = ?",
+
+      $res = $this->db->query("select id_reserva, id_vuelo, asiento,
+                                   to_char(fecha_hora, 'DD/MM/YYY HH:MI') as comprada
+                                 from reservas where id_usuario = ?",
                                 array($id));
 
       $res = $res->num_rows() > 0 ? $res->result_array() : FALSE;
@@ -36,24 +39,28 @@ class Reserva extends CI_Model{
       if ($res === FALSE) return FALSE;
       foreach ($res as $reserva)
       {
-         $reservas[] = $this->db->query("select *, ? as asiento, ? as id_reserva
-                                           from v_vuelos where id = ?",
-                                   array($reserva['asiento'], $reserva['id'],
-                                            $reserva['id_vuelo']))->row_array();
+         $reservas[] = $this->db->query("select *, ? as asiento, ? as id_reserva,
+                                               ? as comprada
+                                           from v_vuelos where vuelo = ?",
+                                   array($reserva['asiento'], $reserva['id_reserva'],
+                                         $reserva['comprada'],
+                                         $reserva['id_vuelo']))->row_array();
       }
       return $reservas;
   }
 
   public function por_reserva($id_reserva)
   {
-      $res = $this->db->query("select id_vuelo, asiento from reservas where id = ?",
+      $res = $this->db->query("select id_vuelo, asiento,
+                                   to_char(fecha_hora, 'DD/MM/YYY HH:MI') as comprada
+                                 from reservas where id_reserva = ?",
                                 array($id_reserva));
 
       $res = $res->num_rows() > 0 ? $res->row_array() : FALSE;
       if ($res === FALSE) return FALSE;
-      $reserva = $this->db->query("select *, ? as asiento, ?as id_reserva
-                                     from v_vuelos where id = ?",
-                                   array($res['asiento'], $id_reserva,
+      $reserva = $this->db->query("select *, ? as asiento, ? as id_reserva, ? as comprada
+                                     from v_vuelos where vuelo = ?",
+                                   array($res['asiento'], $id_reserva, $res['comprada'],
                                             $res['id_vuelo']))->row_array();
       return $reserva;
   }

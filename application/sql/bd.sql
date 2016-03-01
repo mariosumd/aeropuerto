@@ -1,47 +1,57 @@
 drop table if exists usuarios cascade;
 
-create table usuarios(
-    id          bigserial    constraint pk_usuarios primary key,
-    nombre      varchar(50)  not null,
-    email       varchar(100) not null,
-    password    char(60)     not null,
-    dni         char(9)      not null constraint uq_dni_ususarios unique,
-    constraint ck_dni_length check(char_length(DNI) = 9)
+create table usuarios (
+  id_usuario bigserial   constraint pk_usuarios primary key,
+  nombre     varchar(20) not null constraint uq_usuario_unico unique,
+  password   char(32)    not null
 );
 
 drop table if exists aeropuertos cascade;
 
-create table aeropuertos(
-    id      bigserial constraint pk_aeropuertos primary key,
-    nombre  char(3) not null
+create table aeropuertos (
+  id_aero  char(3)     constraint pk_aeropuertos primary key,
+  den_aero varchar(40) not null
 );
 
-drop table if exists companyias cascade;
+drop table if exists companias cascade;
 
-create table companyias(
-    id      bigserial constraint pk_companyias primary key,
-    nombre  varchar(50) not null
+create table companias (
+  id_comp  bigserial   constraint pk_companias primary key,
+  den_comp varchar(30) not null
 );
 
 drop table if exists vuelos cascade;
 
-create table vuelos(
-    id           bigserial constraint pk_vuelos primary key,
-    nombre       char(6) not null,
-    id_origen    bigint constraint fk_origen_aeropuertos  references aeropuertos(id) on delete cascade on update cascade,
-    id_destino   bigint constraint fk_destino_aeropuertos references aeropuertos(id) on delete cascade on update cascade,
-    id_companyia bigint constraint fk_vuelos_companyias   references companyias(id)  on delete cascade on update cascade,
-    salida       timestamp not null default current_timestamp,
-    plazas       numeric(3) not null
+create table vuelos (
+  id_vuelo char(6)      constraint pk_vuelos primary key,
+  id_orig  char(3)      not null constraint fk_vuelos_aeropuerto_origen
+                        references aeropuertos (id_aero)
+                        on delete no action on update cascade,
+  id_dest  char(3)      not null constraint fk_vuelos_aeropuerto_destino
+                        references aeropuertos (id_aero)
+                        on delete no action on update cascade,
+  id_comp  bigint       not null constraint fk_vuelos_companias
+                        references companias (id_comp)
+                        on delete no action on update cascade,
+  salida   timestamp    not null,
+  llegada  timestamp    not null,
+  plazas   numeric(3)   not null,
+  precio   numeric(6,2) not null
 );
 
 drop table if exists reservas cascade;
 
-create table reservas(
-    id          bigserial  constraint pk_reservas primary key,
-    id_vuelo    bigint     constraint fk_reservas_vuelos   references vuelos(id) on delete cascade on update cascade,
-    id_usuario  bigint     constraint fk_reservas_usuarios references usuarios(id) on delete cascade on update cascade,
-    asiento     numeric(3) not null
+create table reservas (
+  id_reserva bigserial  constraint pk_reservas primary key,
+  id_usuario bigint     not null constraint fk_reservas_usuarios
+                        references usuarios (id_usuario)
+                        on delete no action on update cascade,
+  id_vuelo   char(6)    not null constraint fk_reservas_vuelos
+                        references vuelos (id_vuelo)
+                        on delete no action on update cascade,
+  asiento    numeric(3) not null,
+  fecha_hora timestamp  not null,
+  constraint uq_asiento_unico unique (id_vuelo, asiento)
 );
 
 drop table if exists ci_sessions cascade;
@@ -58,41 +68,43 @@ create index "ci_sessions_timestamp" on "ci_sessions" ("timestamp");
 drop view if exists v_vuelos;
 
 create view v_vuelos as
-    select v.id, v.nombre as vuelo, to_char(v.salida, 'DD/MM/YYY HH:MI') as salida,
-            o.nombre as origen, d.nombre as destino, c.nombre as companyia
-      from vuelos v join aeropuertos o on (id_origen    = o.id)
-                    join aeropuertos d on (id_destino   = d.id)
-                    join companyias  c on (id_companyia = c.id);
+    select v.id_vuelo as vuelo, to_char(v.salida, 'DD/MM/YYY HH:MI') as salida,
+            to_char(v.llegada, 'DD/MM/YYY HH:MI') as llegada,
+            o.den_aero as origen, d.den_aero as destino, c.den_comp as compania
+      from vuelos v join aeropuertos o on (id_orig = o.id_aero)
+                    join aeropuertos d on (id_dest = d.id_aero)
+                    join companias   c on (v.id_comp = c.id_comp);
 
 drop view if exists v_vuelos_disponibles;
 
 create view v_vuelos_disponibles as
-         select v.id, v.nombre as vuelo, to_char(v.salida, 'DD/MM/YYY HH:MI') as salida,
-                 o.nombre as origen, d.nombre as destino, c.nombre as companyia,
-                 (v.plazas - coalesce((select count(*) from reservas where id_vuelo = v.id group by id_vuelo), 0)) as plazas
-           from vuelos v join aeropuertos o on (id_origen    = o.id)
-                         join aeropuertos d on (id_destino   = d.id)
-                         join companyias  c on (id_companyia = c.id)
-          where v.plazas > coalesce((select count(*) from reservas where id_vuelo = v.id group by id_vuelo), 0);
+    select v.id_vuelo as vuelo, to_char(v.salida, 'DD/MM/YYY HH:MI') as salida,
+            to_char(v.llegada, 'DD/MM/YYY HH:MI') as llegada,
+            o.den_aero as origen, d.den_aero as destino, c.den_comp as compania,
+            (v.plazas - coalesce((select count(*) from reservas where id_vuelo = v.id_vuelo group by id_vuelo), 0)) as plazas
+      from vuelos v join aeropuertos o on (id_orig = o.id_aero)
+                    join aeropuertos d on (id_dest = d.id_aero)
+                    join companias   c on (v.id_comp = c.id_comp)
+     where v.plazas > coalesce((select count(*) from reservas where id_vuelo = v.id_vuelo group by id_vuelo), 0);
 
-insert into usuarios (nombre, email, password, dni)
-    values ('Juan Pérez', 'juan@gmail.com', crypt('juan', gen_salt('bf')), '11111111A'),
-           ('María Rodríguez', 'maria@gmail.com', crypt('maria',gen_salt('bf')), '22222222A');
+insert into usuarios (nombre, password)
+    values ('juan', md5('juan')),
+           ('maria', md5('maria'));
 
-insert into aeropuertos (nombre)
-    values ('XER'),
-           ('MAD'),
-           ('BAR');
+insert into aeropuertos (id_aero, den_aero)
+    values ('XER', 'Jerez'),
+           ('MAD', 'Madrid'),
+           ('BAR', 'Barcelona');
 
-insert into companyias (nombre)
+insert into companias (den_comp)
     values ('Ryanair'),
            ('Iberia'),
            ('AirBerlin');
 
-insert into vuelos (nombre, id_origen, id_destino, id_companyia, plazas, salida)
-    values ('VA0123', 1, 2, 1, 1, '2016-03-02 09:00'::timestamp),
-           ('CZ7894', 1, 3, 2, 2, '2016-03-02 09:00'::timestamp),
-           ('QW9631', 2, 3, 3, 1, '2016-03-02 09:00'::timestamp);
+insert into vuelos (id_vuelo, id_orig, id_dest, id_comp, plazas, salida, llegada, precio)
+    values ('VA0123', 'XER', 'MAD', 1, 1, '2016-03-05 09:30'::timestamp, '2016-03-05 10:00'::timestamp, 50.00),
+           ('CZ7894', 'XER', 'BAR', 2, 2, '2016-03-05 09:00'::timestamp, '2016-03-05 10:30'::timestamp, 55.00),
+           ('QW9631', 'MAD', 'BAR', 3, 1, '2016-03-05 10:00'::timestamp, '2016-03-05 11:00'::timestamp, 60.00);
 
-insert into reservas (id_vuelo, id_usuario, asiento)
-    values (1, 1, 1);
+insert into reservas (id_vuelo, id_usuario, asiento, fecha_hora)
+    values ('VA0123', 1, 1, current_timestamp);

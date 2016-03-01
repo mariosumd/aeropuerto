@@ -2,7 +2,7 @@
 
 <div class="container-fluid" style="padding-top:20px">
   <div class="row">
-    <div class="col-md-4 col-md-offset-4">
+    <div class="col-md-8 col-md-offset-2">
       <div class="panel panel-primary">
         <div class="panel-heading">
           <h3 class="panel-title">Reserva</h3>
@@ -12,10 +12,11 @@
                 <div class="form-group">
                     <?= form_open('reservas/reserva') ?>
                         <?php foreach($vuelos as $vuelo): ?>
-                            <?= form_label($vuelo['companyia']." ".$vuelo['vuelo'].": ".$vuelo['origen'].
-                                            "-".$vuelo['destino']." -> ".$vuelo['salida'].
+                            <?= form_label($vuelo['compania']." ".$vuelo['vuelo'].": ".$vuelo['origen'].
+                                            "-".$vuelo['destino'].". Salida -> ".$vuelo['salida'].
+                                            ". Llegada ->".$vuelo['llegada'].
                                             " [Plazas disponibles:".$vuelo['plazas']."]") ?>
-                            <?= form_radio('vuelo', $vuelo['id'], TRUE) ?>
+                            <?= form_radio('vuelo', $vuelo['vuelo'], TRUE) ?>
                             <br />
                         <?php endforeach; ?>
                         <?= form_submit('reservar', 'Reservar', 'class="btn btn-success"') ?>
@@ -33,7 +34,7 @@
 <?php if ($reservas !== FALSE): ?>
     <div class="container-fluid" style="padding-top:20px">
       <div class="row">
-        <div class="col-md-4 col-md-offset-4">
+        <div class="col-md-8 col-md-offset-2">
           <div class="panel panel-primary">
             <div class="panel-heading">
               <h3 class="panel-title">Tus reservas</h3>
@@ -43,9 +44,11 @@
                         <?php foreach($reservas as $reserva): ?>
                             <?= form_open('reservas/anula') ?>
                                 <?= form_hidden('id_reserva', $reserva['id_reserva']) ?>
-                                <?= form_label($reserva['companyia']." ".$reserva['vuelo'].": ".$reserva['origen'].
-                                                "-".$reserva['destino']." -> ".$reserva['salida'].
-                                                " [Asiento: ".$reserva['asiento']."]") ?>
+                                <?= form_label($reserva['compania']." ".$reserva['vuelo'].": ".$reserva['origen'].
+                                                "-".$reserva['destino'].". Salida -> ".$reserva['salida'].
+                                                ". Llegada -> ".$reserva['llegada'].
+                                                " [Asiento: ".$reserva['asiento']."]".
+                                                " Comprada: " . $reserva['comprada']) ?>
                                 <?= form_submit('anular', 'Anular', 'class="btn btn-danger btn-sm"') ?>
                             <?= form_close() ?>
                             <br />
